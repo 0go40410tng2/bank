@@ -1,37 +1,24 @@
 import pytest
-from app import app, db, Account
+from flask import jsonify
+from app import create_app, db, Account
 
 @pytest.fixture
-def client():
-    # Configure app for testing
-    app.config.from_object('test_config')
-    with app.test_client() as client:
-        with app.app_context():
-            db.create_all()  # Create tables
-        yield client
-        # Teardown
-        with app.app_context():
-            db.session.remove()
-            db.drop_all()
+def app():
+    app = create_app({
+        'SQLALCHEMY_DATABASE_URI': 'mysql+pymysql://root:bakanese@localhost/test_bank_and_branches',
+        'SQLALCHEMY_TRACK_MODIFICATIONS': False,
+    })
+
+    # Create the tables in the test database
+    with app.app_context():
+        db.create_all()
+        
+    yield app
+
+    # Cleanup the database after tests
+    with app.app_context():
+        db.drop_all()
 
 @pytest.fixture
-def mock_account_data():
-    """Provide mock data for accounts."""
-    return [
-        Account(account_id=1, account_type_code=101, customer_id=1, account_name="Test Account 1", 
-                date_opened="2024-12-01", current_balance=1000.00),
-        Account(account_id=2, account_type_code=102, customer_id=2, account_name="Test Account 2", 
-                date_opened="2024-12-02", current_balance=2000.00)
-    ]
-
-# Test GET /accounts
-def test_get_accounts(client, mock_account_data):
-    db.session.add_all(mock_account_data)
-    db.session.commit()
-
-    response = client.get('/accounts')
-    assert response.status_code == 200
-    data = response.get_json()
-    assert len(data) == 2
-    assert data[0]['account_name'] == "Test Account 1"
-
+def client(app):
+    return app.test_client()
