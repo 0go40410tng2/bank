@@ -45,7 +45,7 @@ def register_routes(app):
 
     @app.route('/accounts/<int:account_id>', methods=['GET'])
     def get_account(account_id):
-        account = Account.query.get(account_id)
+        account = db.session.get(Account, account_id)
         if not account:
             return jsonify({'error': 'Account not found'}), 404
         return jsonify({
@@ -75,6 +75,8 @@ def register_routes(app):
             return jsonify({'error': 'Database integrity error'}), 400
         except KeyError as e:
             return jsonify({'error': f'Missing field: {e}'}), 400
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
 
     @app.route('/accounts/<int:account_id>', methods=['PUT'])
     def update_account(account_id):
