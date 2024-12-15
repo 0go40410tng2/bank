@@ -118,20 +118,21 @@ def test_get_account_not_found(client):
     assert response.status_code == 404
     assert json_data['error'] == 'Account not found'
 
-# # Test for missing required field in account creation
-# def test_create_account_missing_field(client):
-#     account_data = {
-#         'account_id': 1,
-#         'account_type_code': 101,
-#         'customer_id': 1,
-#         'account_name': 'Savings Account',
-#         'date_opened': '2024-12-15',
-#         'current_balance': 1000.00,
-#     }
-#     response = client.post('/accounts', json=account_data)
-#     json_data = response.get_json()
-#     assert response.status_code == 400
-#     assert 'Missing field' in json_data['error']
+# Test for missing required field (e.g. 'account_name')
+def test_create_account_missing_field(client):
+    account_data = {
+        'account_id': 7,
+        'account_type_code': 5,
+        'customer_id': 1,
+        'date_opened': '2024-12-15',
+        'current_balance': 1000.00,
+        # 'account_name' is missing
+    }
+    response = client.post('/accounts', json=account_data)
+    json_data = response.get_json()
+    assert response.status_code == 400
+    assert 'Missing field' in json_data['error']
+
 
 # # Test for database integrity error
 # def test_create_account_integrity_error(client):
