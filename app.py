@@ -81,7 +81,7 @@ def register_routes(app):
     @app.route('/accounts/<int:account_id>', methods=['PUT'])
     def update_account(account_id):
         data = request.get_json()
-        account = Account.query.get(account_id)
+        account = db.session.get(Account, account_id)
         if not account:
             return jsonify({'error': 'Account not found'}), 404
 
