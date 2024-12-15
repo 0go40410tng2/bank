@@ -111,12 +111,12 @@ def test_delete_account(client):
     assert response.status_code == 200
     assert json_data['message'] == 'Account and related transactions deleted successfully'
 
-# # Test for account not found
-# def test_get_account_not_found(client):
-#     response = client.get('/accounts/999')
-#     json_data = response.get_json()
-#     assert response.status_code == 404
-#     assert json_data['error'] == 'Account not found'
+# Test for account not found
+def test_get_account_not_found(client):
+    response = client.get('/accounts/999')
+    json_data = response.get_json()
+    assert response.status_code == 404
+    assert json_data['error'] == 'Account not found'
 
 # # Test for missing required field in account creation
 # def test_create_account_missing_field(client):
