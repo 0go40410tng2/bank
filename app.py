@@ -57,6 +57,15 @@ def register_routes(app):
     @app.route('/accounts', methods=['POST'])
     def create_account():
         data = request.get_json()
+
+        # List of required fields
+        required_fields = ['account_id', 'account_type_code', 'customer_id', 'account_name', 'date_opened', 'current_balance']
+
+        # Check if any required field is missing
+        missing_fields = [field for field in required_fields if field not in data]
+        if missing_fields:
+            return jsonify({'error': f'Missing field(s): {", ".join(missing_fields)}'}), 400
+
         try:
             new_account = Account(
                 account_id=data['account_id'],
@@ -65,7 +74,7 @@ def register_routes(app):
                 account_name=data['account_name'],
                 date_opened=data['date_opened'],
                 current_balance=data['current_balance'],
-                other_account_details=data.get('other_account_details')
+                other_account_details=data.get('other_account_details')  # Optional field
             )
             db.session.add(new_account)
             db.session.commit()
@@ -73,10 +82,11 @@ def register_routes(app):
         except IntegrityError:
             db.session.rollback()
             return jsonify({'error': 'Database integrity error'}), 400
-        except KeyError as e:
-            return jsonify({'error': f'Missing field: {e}'}), 400
         except Exception as e:
             return jsonify({'error': str(e)}), 400
+
+    
+    
 
     @app.route('/accounts/<int:account_id>', methods=['PUT'])
     def update_account(account_id):
