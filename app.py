@@ -94,7 +94,7 @@ def register_routes(app):
 
     @app.route('/accounts/<int:account_id>', methods=['DELETE'])
     def delete_account(account_id):
-        account = Account.query.get(account_id)
+        account = db.session.get(Account, account_id)
         if not account:
             return jsonify({'error': 'Account not found'}), 404
 
