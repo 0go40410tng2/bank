@@ -23,3 +23,15 @@ def mock_account_data():
         Account(account_id=2, account_type_code=102, customer_id=2, account_name="Test Account 2", 
                 date_opened="2024-12-02", current_balance=2000.00)
     ]
+
+# Test GET /accounts
+def test_get_accounts(client, mock_account_data):
+    db.session.add_all(mock_account_data)
+    db.session.commit()
+
+    response = client.get('/accounts')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert len(data) == 2
+    assert data[0]['account_name'] == "Test Account 1"
+
