@@ -69,6 +69,17 @@ class TransactionMessage(db.Model):
     location = db.Column(db.String(255))
     party_role = db.Column(db.String(255))
 
+# Root Endpoint
+@app.route('/')
+def home():
+    return jsonify({
+        'message': 'Welcome to the Bank API!',
+        'endpoints': {
+            '/accounts': 'Manage accounts',
+            '/accounts/<account_id>': 'Manage a specific account'
+        }
+    })
+
 # CRUD Endpoints for Accounts
 @app.route('/accounts', methods=['GET'])
 def get_accounts():
@@ -139,7 +150,6 @@ def delete_account(account_id):
     db.session.delete(account)
     db.session.commit()
     return jsonify({'message': 'Account and related transactions deleted successfully'})
-
 
 # Error Handling
 @app.errorhandler(404)
