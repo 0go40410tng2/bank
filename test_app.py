@@ -76,23 +76,23 @@ def test_get_account(client):
     assert json_data['account_id'] == 7
     assert json_data['account_name'] == 'Savings Account'
 
-# # Test for updating an account
-# def test_update_account(client):
-#     account_data = {
-#         'account_id': 1,
-#         'account_type_code': 101,
-#         'customer_id': 1,
-#         'account_name': 'Savings Account',
-#         'date_opened': '2024-12-15',
-#         'current_balance': 1000.00,
-#         'other_account_details': 'Details here'
-#     }
-#     client.post('/accounts', json=account_data)  # Creating account first
-#     updated_data = {'account_name': 'Updated Savings Account', 'current_balance': 1200.00}
-#     response = client.put('/accounts/1', json=updated_data)
-#     json_data = response.get_json()
-#     assert response.status_code == 200
-#     assert json_data['message'] == 'Account updated successfully'
+# Test for updating an account
+def test_update_account(client):
+    account_data = {
+        'account_id': 7,
+        'account_type_code': 5,
+        'customer_id': 1,
+        'account_name': 'Savings Account',
+        'date_opened': '2024-12-15',
+        'current_balance': 1000.00,
+        'other_account_details': 'Details here'
+    }
+    client.post('/accounts', json=account_data)  # Creating account first
+    updated_data = {'account_name': 'Updated Savings Account', 'current_balance': 1200.00}
+    response = client.put('/accounts/7', json=updated_data)
+    json_data = response.get_json()
+    assert response.status_code == 200
+    assert json_data['message'] == 'Account updated successfully'
 
 # # Test for deleting an account
 # def test_delete_account(client):
