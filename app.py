@@ -146,16 +146,6 @@ class RefCustomerType(db.Model):
     customer_type_code = db.Column(db.Integer, primary_key=True)
     customer_type_description = db.Column(db.String(255))
 
-class TransactionMessage(db.Model):
-    __tablename__ = 'transaction_messages'
-    message_number = db.Column(db.Integer, primary_key=True)
-    account_id = db.Column(db.Integer, db.ForeignKey('accounts.account_id'))
-    counterparty_id = db.Column(db.Integer, db.ForeignKey('parties.party_id'))
-    transaction_type_code = db.Column(db.Integer, db.ForeignKey('ref_transaction_types.transaction_type_code'))
-    currency_code = db.Column(db.String(10))
-    transaction_date = db.Column(db.Date)
-    amount = db.Column(db.Numeric(18, 2))
-
 class Party(db.Model):
     __tablename__ = 'parties'
 
