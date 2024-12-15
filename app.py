@@ -1,18 +1,24 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity, get_jwt
+from marshmallow import Schema, fields, validate, ValidationError
 from sqlalchemy.exc import IntegrityError
+import datetime
 
 db = SQLAlchemy()
+jwt = JWTManager()
 
 def create_app(config=None):
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:bakanese@localhost/bank_and_branches'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['JWT_SECRET_KEY'] = 'your-secret-key'  # Change this to a more secure secret
 
     if config:
         app.config.update(config)
 
     db.init_app(app)
+    jwt.init_app(app)
 
     with app.app_context():
         db.create_all()
@@ -21,6 +27,7 @@ def create_app(config=None):
     register_error_handlers(app)
 
     return app
+
 
 # Register routes
 def register_routes(app):
@@ -34,8 +41,28 @@ def register_routes(app):
             }
         })
 
+    @app.route('/login', methods=['POST'])
+    def login():
+        data = request.get_json()
+
+        # Assume we check user credentials here
+        username = data.get('username')
+        password = data.get('password')
+
+        # In a real app, you would validate the user against the database
+        if username == 'admin' and password == 'admin':
+            access_token = create_access_token(identity=username, additional_claims={'role': 'admin'})
+            return jsonify(access_token=access_token), 200
+        else:
+            return jsonify({'error': 'Invalid credentials'}), 401
+
     @app.route('/accounts', methods=['GET'])
+    @jwt_required()
     def get_accounts():
+        claims = get_jwt()  # Get the full claims from the JWT
+        if claims.get('role') != 'admin':
+            return jsonify({'error': 'Access forbidden: You do not have the required role'}), 403
+
         accounts = Account.query.all()
         return jsonify([{
             'account_id': a.account_id,
