@@ -58,23 +58,23 @@ def test_get_accounts(client):
     assert response.status_code == 200
     assert isinstance(json_data, list)  # Should be a list of accounts
 
-# # Test for retrieving a single account
-# def test_get_account(client):
-#     account_data = {
-#         'account_id': 1,
-#         'account_type_code': 101,
-#         'customer_id': 1,
-#         'account_name': 'Savings Account',
-#         'date_opened': '2024-12-15',
-#         'current_balance': 1000.00,
-#         'other_account_details': 'Details here'
-#     }
-#     client.post('/accounts', json=account_data)  # Creating account first
-#     response = client.get('/accounts/1')
-#     json_data = response.get_json()
-#     assert response.status_code == 200
-#     assert json_data['account_id'] == 1
-#     assert json_data['account_name'] == 'Savings Account'
+# Test for retrieving a single account
+def test_get_account(client):
+    account_data = {
+        'account_id': 7,
+        'account_type_code': 5,
+        'customer_id': 1,
+        'account_name': 'Savings Account',
+        'date_opened': '2024-12-15',
+        'current_balance': 1000.00,
+        'other_account_details': 'Details here'
+    }
+    client.post('/accounts', json=account_data)  # Creating account first
+    response = client.get('/accounts/7')
+    json_data = response.get_json()
+    assert response.status_code == 200
+    assert json_data['account_id'] == 7
+    assert json_data['account_name'] == 'Savings Account'
 
 # # Test for updating an account
 # def test_update_account(client):
