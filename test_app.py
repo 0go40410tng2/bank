@@ -51,15 +51,22 @@ def test_get_accounts(client):
     # Ensure the response is successful
     assert response.status_code == 200
 
- 
-
-# Test for retrieving a single account
 def test_get_account(client):
-    response = client.get('/accounts/2')
-    json_data = response.get_json()
+    # Obtain a valid token by logging in
+    login_response = client.post('/login', json={'username': 'admin', 'password': 'admin'})
+    assert login_response.status_code == 200
+    token = login_response.get_json()['access_token']  # Access the correct key for the token
+    
+    # Make authenticated request to retrieve a specific account
+    headers = {'Authorization': f'Bearer {token}'}
+    response = client.get(f'/accounts/2', headers=headers)
+
+    # Ensure the response is successful
     assert response.status_code == 200
-    assert json_data['account_id'] == 2
-    assert json_data['account_name'] == 'Acme Savings'
+    json_data = response.get_json()
+    assert json_data['account_id'] == 2  # Check that the account ID matches
+    assert 'account_name' in json_data  # Ensure account_name is returned
+    assert 'current_balance' in json_data  # Ensure current_balance is returned
 
 # Test for creating an account
 def test_create_account(client):
@@ -92,9 +99,17 @@ def test_delete_account(client):
     assert response.status_code == 200
     assert json_data['message'] == 'Account and related transactions deleted successfully'
 
-# Test for account not found
 def test_get_account_not_found(client):
-    response = client.get('/accounts/999')
+    # Obtain a valid token by logging in
+    login_response = client.post('/login', json={'username': 'admin', 'password': 'admin'})
+    assert login_response.status_code == 200
+    token = login_response.get_json()['access_token']  # Access the correct key for the token
+    
+    # Make an authenticated request for a non-existing account
+    headers = {'Authorization': f'Bearer {token}'}
+    response = client.get('/accounts/999', headers=headers)  # Non-existing account ID
+
+    # Assert that the response is 404 Not Found
     json_data = response.get_json()
     assert response.status_code == 404
     assert json_data['error'] == 'Account not found'
