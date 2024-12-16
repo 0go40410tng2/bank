@@ -6,7 +6,7 @@ from app import create_app, db, Account
 def app():
     # Create the app instance with the database URI pointing to your existing database
     app = create_app({
-        'SQLALCHEMY_DATABASE_URI': 'mysql+pymysql://root:bakanese@localhost/test_bank_and_branches',
+        'SQLALCHEMY_DATABASE_URI': 'mysql+pymysql://root:bakanese@localhost/bank_and_branches',
         'SQLALCHEMY_TRACK_MODIFICATIONS': False,
     })
 
