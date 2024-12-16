@@ -69,17 +69,37 @@ def register_routes(app):
             'account_name': a.account_name,
             'current_balance': float(a.current_balance)
         } for a in accounts])
-
+    
     @app.route('/accounts/<int:account_id>', methods=['GET'])
+    @jwt_required()  # Ensure the request includes a valid JWT
     def get_account(account_id):
+        claims = get_jwt()  # Get the full claims from the JWT
+
+        # If you want to enforce role-based access, check the role claim
+        if claims.get('role') != 'admin':
+            return jsonify({'error': 'Access forbidden: You do not have the required role'}), 403
+
         account = db.session.get(Account, account_id)
         if not account:
             return jsonify({'error': 'Account not found'}), 404
+
+        # Return the account data
         return jsonify({
             'account_id': account.account_id,
             'account_name': account.account_name,
             'current_balance': float(account.current_balance)
         })
+
+    # @app.route('/accounts/<int:account_id>', methods=['GET'])
+    # def get_account(account_id):
+    #     account = db.session.get(Account, account_id)
+    #     if not account:
+    #         return jsonify({'error': 'Account not found'}), 404
+    #     return jsonify({
+    #         'account_id': account.account_id,
+    #         'account_name': account.account_name,
+    #         'current_balance': float(account.current_balance)
+    #     })
 
     @app.route('/accounts', methods=['POST'])
     def create_account():
