@@ -14,15 +14,18 @@ The application requires the following environment variables:
 - `DATABASE_URL`: The connection string to your MySQL database.
 - `SECRET_KEY`: A secret key for securing sessions and tokens.
 
-## API Endpoints
+# API Endpoints
 
-| Endpoint        | Method | Description                    |
-|-----------------|--------|--------------------------------|
-| `/api/users`    | GET    | List all users                 |
-| `/api/users`    | POST   | Create a new user              |
-| `/api/accounts` | GET    | List all bank accounts         |
-| `/api/accounts` | POST   | Create a new bank account      |
-| `/api/transfer` | POST   | Transfer funds between accounts|
+| HTTP Method | Endpoint                  | Description                                                    | Requirements                    |
+|-------------|---------------------------|----------------------------------------------------------------|---------------------------------|
+| **GET**     | `/`                       | Returns a welcome message and a list of available endpoints.  | None                            |
+| **POST**    | `/login`                  | Authenticates a user and returns a JWT token if valid.         | None                            |
+| **GET**     | `/accounts`               | Retrieves a list of all accounts.                              | JWT required, "admin" role      |
+| **GET**     | `/accounts/<int:account_id>` | Retrieves details of a specific account by ID.               | JWT required, "admin" role      |
+| **POST**    | `/accounts`               | Creates a new account.                                         | None explicitly mentioned       |
+| **PUT**     | `/accounts/<int:account_id>` | Updates details of a specific account by ID.                 | None explicitly mentioned       |
+| **DELETE**  | `/accounts/<int:account_id>` | Deletes an account and its related transaction messages.      | None explicitly mentioned       |
+
 
 ## Testing
 To run the tests, execute the following command:
