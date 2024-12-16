@@ -34,14 +34,23 @@ def test_home(client):
     assert response.status_code == 200
     assert json_data['message'] == 'Welcome to the Bank API!'
 
-# def test_get_accounts(client):
-#     # Obtain a valid token
-#     login_response = client.post('/login', json={'username': 'admin', 'password': 'admin'})
-#     token = login_response.get_json()['aceyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTczNDMzMjY4NiwianRpIjoiNzMwNDU5MmQtMjc5NS00ZmEyLTg5YzYtMTg1MTA3OWU5MjBhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzM0MzMyNjg2LCJjc3JmIjoiNzI5ODJiYmUtY2FhNS00OTU5LTk5YjctNjA0Nzc0OTQxZDk4IiwiZXhwIjoxNzM0MzMzNTg2LCJyb2xlIjoiYWRtaW4ifQ.fSpLl6kPWq694sOJKCU9iejjfGhrMSYOIaL28jwKqt8']
-#     # Make authenticated request
-#     headers = {'Authorization': f'Bearer {token}'}
-#     response = client.get('/accounts', headers=headers)
-#     assert response.status_code == 200
+def test_get_accounts(client):
+    # Obtain a valid token by logging in
+    login_response = client.post('/login', json={'username': 'admin', 'password': 'admin'})
+    
+    # Ensure login was successful
+    assert login_response.status_code == 200
+    
+    # Get the token from the response
+    token = login_response.get_json()['access_token']  # Access the correct key for the token
+    
+    # Make authenticated request to the /accounts route
+    headers = {'Authorization': f'Bearer {token}'}
+    response = client.get('/accounts', headers=headers)
+    
+    # Ensure the response is successful
+    assert response.status_code == 200
+
  
 
 # Test for retrieving a single account
