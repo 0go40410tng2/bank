@@ -1,9 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity, get_jwt
-from marshmallow import Schema, fields, validate, ValidationError
 from sqlalchemy.exc import IntegrityError
-import datetime
 
 db = SQLAlchemy()
 jwt = JWTManager()
@@ -89,17 +87,6 @@ def register_routes(app):
             'account_name': account.account_name,
             'current_balance': float(account.current_balance)
         })
-
-    # @app.route('/accounts/<int:account_id>', methods=['GET'])
-    # def get_account(account_id):
-    #     account = db.session.get(Account, account_id)
-    #     if not account:
-    #         return jsonify({'error': 'Account not found'}), 404
-    #     return jsonify({
-    #         'account_id': account.account_id,
-    #         'account_name': account.account_name,
-    #         'current_balance': float(account.current_balance)
-    #     })
 
     @app.route('/accounts', methods=['POST'])
     def create_account():
