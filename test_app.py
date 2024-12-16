@@ -52,8 +52,8 @@ def test_get_account(client):
     assert json_data['account_id'] == 2
     assert json_data['account_name'] == 'Acme Savings'
 
-# Test for updating an account
-def test_update_account(client):
+# Test for creating an account
+def test_create_account(client):
     account_data = {
         'account_id': 7,
         'account_type_code': 5,
@@ -63,7 +63,13 @@ def test_update_account(client):
         'current_balance': 1000.00,
         'other_account_details': 'Details here'
     }
-    client.post('/accounts', json=account_data)  # Creating account first
+    response = client.post('/accounts', json=account_data)
+    json_data = response.get_json()
+    assert response.status_code == 201
+    assert json_data['message'] == 'Account created successfully'
+
+# Test for updating an account
+def test_update_account(client):
     updated_data = {'account_name': 'Updated Savings Account', 'current_balance': 1200.00}
     response = client.put('/accounts/7', json=updated_data)
     json_data = response.get_json()
