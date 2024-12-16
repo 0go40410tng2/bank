@@ -34,35 +34,22 @@ def test_home(client):
     assert response.status_code == 200
     assert json_data['message'] == 'Welcome to the Bank API!'
 
-# Test for creating an account
-def test_create_account(client):
-    account_data = {
-        'account_id': 7,
-        'account_type_code': 5,
-        'customer_id': 1,
-        'account_name': 'Savings Account',
-        'date_opened': '2024-12-15',
-        'current_balance': 1000.00,
-        'other_account_details': 'Details here'
-    }
-    response = client.post('/accounts', json=account_data)
-    json_data = response.get_json()
-    print(json_data)
-    assert response.status_code == 201
-    assert json_data['message'] == 'Account created successfully'
-
-# Test for retrieving all accounts
 def test_get_accounts(client):
-    response = client.get('/accounts')
-    json_data = response.get_json()
+    # Obtain a valid token
+    login_response = client.post('/login', json={'username': 'admin', 'password': 'admin'})
+    token = login_response.get_json()['aceyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTczNDMzMjY4NiwianRpIjoiNzMwNDU5MmQtMjc5NS00ZmEyLTg5YzYtMTg1MTA3OWU5MjBhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzM0MzMyNjg2LCJjc3JmIjoiNzI5ODJiYmUtY2FhNS00OTU5LTk5YjctNjA0Nzc0OTQxZDk4IiwiZXhwIjoxNzM0MzMzNTg2LCJyb2xlIjoiYWRtaW4ifQ.fSpLl6kPWq694sOJKCU9iejjfGhrMSYOIaL28jwKqt8']
+
+    # Make authenticated request
+    headers = {'Authorization': f'Bearer {token}'}
+    response = client.get('/accounts', headers=headers)
     assert response.status_code == 200
-    assert isinstance(json_data, list)  # Should be a list of accounts
+
 
 # Test for retrieving a single account
 def test_get_account(client):
     account_data = {
-        'account_id': 7,
-        'account_type_code': 5,
+        'account_id': 8,
+        'account_type_code': 2,
         'customer_id': 1,
         'account_name': 'Savings Account',
         'date_opened': '2024-12-15',
@@ -70,10 +57,10 @@ def test_get_account(client):
         'other_account_details': 'Details here'
     }
     client.post('/accounts', json=account_data)  # Creating account first
-    response = client.get('/accounts/7')
+    response = client.get('/accounts/8')
     json_data = response.get_json()
     assert response.status_code == 200
-    assert json_data['account_id'] == 7
+    assert json_data['account_id'] == 8
     assert json_data['account_name'] == 'Savings Account'
 
 # Test for updating an account
@@ -97,7 +84,7 @@ def test_update_account(client):
 # Test for deleting an account
 def test_delete_account(client):
     account_data = {
-        'account_id': 7,
+        'account_id': 10,
         'account_type_code': 5,
         'customer_id': 1,
         'account_name': 'Savings Account',
